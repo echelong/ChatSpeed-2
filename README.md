@@ -1,8 +1,8 @@
 # ChatSpeed 2
 
-**Make long ChatGPT, Claude.ai and Grok conversations lighter and faster.**
+**Make long ChatGPT, Claude.ai, Grok, Gemini and DeepSeek conversations lighter and faster.**
 
-ChatSpeed 2 is an open-source Chromium browser extension designed to reduce browser rendering work in long AI conversations. It supports ChatGPT, Claude.ai and Grok with platform-specific optimizers.
+ChatSpeed 2 is an open-source Chromium browser extension designed to reduce browser rendering work in long AI conversations. It supports ChatGPT, Claude.ai, Grok, Gemini and DeepSeek with platform-specific optimizers.
 
 Instead of deleting or modifying your conversation, ChatSpeed 2 adjusts eligible conversation requests so the browser receives a smaller recent portion of the chat.
 
@@ -19,15 +19,17 @@ Instead of deleting or modifying your conversation, ChatSpeed 2 adjusts eligible
 | **ChatGPT** | Request-level history reduction + render optimization |
 | **Claude.ai** | Render optimization using CSS `content-visibility` and containment |
 | **Grok** | Render optimization using CSS `content-visibility` and containment |
+| **Gemini** | Render optimization using CSS `content-visibility` and containment |
+| **DeepSeek** | Render optimization of mounted chat content without replacing DeepSeek's own virtualization |
 
-Claude and Grok support deliberately do **not** rewrite their private network requests. ChatSpeed accelerates long conversations on those platforms at the rendering layer and fails open if their page structure changes.
+Claude, Grok, Gemini and DeepSeek support deliberately do **not** rewrite their private network requests. ChatSpeed accelerates long conversations on those platforms at the rendering layer and fails open if their page structure changes.
 
 
 ---
 
 ## What ChatSpeed 2 does
 
-Very large ChatGPT conversations can become increasingly heavy for the browser. More history can mean more messages to download, more text and code to process, more UI elements to render, and more browser memory usage.
+Very large AI conversations can become increasingly heavy for the browser. More history can mean more messages to download, more text and code to process, more UI elements to render, and more browser memory usage.
 
 ChatSpeed 2 reduces that workload before the page has to render it.
 

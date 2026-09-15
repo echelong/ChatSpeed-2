@@ -13,6 +13,8 @@ type Platform =
   | 'chatgpt'
   | 'claude'
   | 'grok'
+  | 'gemini'
+  | 'deepseek'
   | 'unsupported';
 
 function detectPlatform(): Platform {
@@ -39,6 +41,14 @@ function detectPlatform(): Platform {
     return 'grok';
   }
 
+  if (host === 'gemini.google.com') {
+    return 'gemini';
+  }
+
+  if (host === 'chat.deepseek.com') {
+    return 'deepseek';
+  }
+
   return 'unsupported';
 }
 
@@ -52,6 +62,12 @@ const CLAUDE_TURN_SELECTOR =
 
 const GROK_TURN_SELECTOR =
   '[data-testid="assistant-message"], div.items-end .message-bubble';
+
+const GEMINI_TURN_SELECTOR =
+  'user-query, model-response, .user-query, .model-response';
+
+const DEEPSEEK_TURN_SELECTOR =
+  '[data-message-author-role="user"], .ds-markdown';
 
 let currentSettings: ChatSpeedSettings = {
   enabled: false,
@@ -128,6 +144,18 @@ function renderedTurnCount(): number {
     ).length;
   }
 
+  if (PLATFORM === 'gemini') {
+    return document.querySelectorAll(
+      GEMINI_TURN_SELECTOR,
+    ).length;
+  }
+
+  if (PLATFORM === 'deepseek') {
+    return document.querySelectorAll(
+      DEEPSEEK_TURN_SELECTOR,
+    ).length;
+  }
+
   return 0;
 }
 
@@ -195,6 +223,20 @@ function installRenderOptimizer():
   } else if (PLATFORM === 'grok') {
     style.textContent = `
       ${GROK_TURN_SELECTOR} {
+        content-visibility: auto;
+        contain-intrinsic-size: auto ${nonChatgptIntrinsicSize()}px;
+      }
+    `;
+  } else if (PLATFORM === 'gemini') {
+    style.textContent = `
+      ${GEMINI_TURN_SELECTOR} {
+        content-visibility: auto;
+        contain-intrinsic-size: auto ${nonChatgptIntrinsicSize()}px;
+      }
+    `;
+  } else if (PLATFORM === 'deepseek') {
+    style.textContent = `
+      ${DEEPSEEK_TURN_SELECTOR} {
         content-visibility: auto;
         contain-intrinsic-size: auto ${nonChatgptIntrinsicSize()}px;
       }

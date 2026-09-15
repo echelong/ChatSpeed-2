@@ -35,7 +35,9 @@ function supportsChatSpeed(
       host === 'claude.ai' ||
       host.endsWith('.claude.ai') ||
       host === 'grok.com' ||
-      host.endsWith('.grok.com')
+      host.endsWith('.grok.com') ||
+      host === 'gemini.google.com' ||
+      host === 'chat.deepseek.com'
     );
   } catch {
     return false;
@@ -292,8 +294,9 @@ function App() {
 
       {!supported ? (
         <section className="panel">
-          Open chatgpt.com, claude.ai or
-          grok.com to use ChatSpeed 2.
+          Open ChatGPT, Claude, Grok,
+          Gemini or DeepSeek to use
+          ChatSpeed 2.
         </section>
       ) : (
         <>
@@ -371,11 +374,11 @@ function App() {
 
               {settings.mode ===
                 'balanced' &&
-                'ChatGPT: reduces initial history. Claude/Grok: render acceleration without rewriting private requests.'}
+                'ChatGPT: reduces initial history. Other supported sites: render acceleration without rewriting private requests.'}
 
               {settings.mode ===
                 'turbo' &&
-                'ChatGPT: smallest recent request window. Claude/Grok: stronger render acceleration only.'}
+                'ChatGPT: smallest recent request window. Other supported sites: stronger render acceleration only.'}
             </p>
           </section>
 
