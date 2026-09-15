@@ -1,14 +1,26 @@
 # ChatSpeed 2
 
-**Make large ChatGPT conversations lighter and faster.**
+**Make long ChatGPT and Claude.ai conversations lighter and faster.**
 
-ChatSpeed 2 is an open-source Chromium browser extension designed to reduce how much conversation history ChatGPT has to request and process when opening large chats.
+ChatSpeed 2 is an open-source Chromium browser extension designed to reduce browser rendering work in long AI conversations. It supports ChatGPT and Claude.ai with platform-specific optimizers.
 
 Instead of deleting or modifying your conversation, ChatSpeed 2 adjusts eligible conversation requests so the browser receives a smaller recent portion of the chat.
 
-> Keep long ChatGPT conversations usable without changing the normal ChatGPT experience.
+> Keep long AI conversations usable without deleting or storing your conversation content.
 
 **Built by Cobalt**
+
+---
+
+## Supported platforms
+
+| Platform | Optimization |
+| --- | --- |
+| **ChatGPT** | Request-level history reduction + render optimization |
+| **Claude.ai** | Render optimization using CSS `content-visibility` and containment |
+
+Claude support deliberately does **not** rewrite Claude's private network requests. ChatSpeed accelerates long Claude conversations at the rendering layer and fails open if Claude changes its page structure.
+
 
 ---
 

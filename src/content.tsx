@@ -9,6 +9,39 @@ import { MESSAGE_TYPES } from './lib/messages';
 const PAGE_SOURCE = 'chatspeed2';
 const STYLE_ID = 'chatspeed2-render-style';
 
+type Platform =
+  | 'chatgpt'
+  | 'claude'
+  | 'unsupported';
+
+function detectPlatform(): Platform {
+  const host = window.location.hostname;
+
+  if (
+    host === 'chatgpt.com' ||
+    host.endsWith('.chatgpt.com')
+  ) {
+    return 'chatgpt';
+  }
+
+  if (
+    host === 'claude.ai' ||
+    host.endsWith('.claude.ai')
+  ) {
+    return 'claude';
+  }
+
+  return 'unsupported';
+}
+
+const PLATFORM = detectPlatform();
+
+const CHATGPT_TURN_SELECTOR =
+  '[data-testid^="conversation-turn-"]';
+
+const CLAUDE_TURN_SELECTOR =
+  '[data-testid="user-message"], .font-claude-response';
+
 let currentSettings: ChatSpeedSettings = {
   enabled: false,
   mode: 'balanced',
@@ -19,6 +52,10 @@ let scheduledFrame: number | null = null;
 let lastMetricTime = 0;
 
 function injectInterceptor(): void {
+  if (PLATFORM !== 'chatgpt') {
+    return;
+  }
+
   if (
     document.documentElement.dataset
       .chatspeed2Injected === '1'
@@ -62,13 +99,35 @@ function sendMetrics(
 }
 
 function renderedTurnCount(): number {
-  return document.querySelectorAll(
-    '[data-testid^="conversation-turn-"]',
-  ).length;
+  if (PLATFORM === 'chatgpt') {
+    return document.querySelectorAll(
+      CHATGPT_TURN_SELECTOR,
+    ).length;
+  }
+
+  if (PLATFORM === 'claude') {
+    return document.querySelectorAll(
+      CLAUDE_TURN_SELECTOR,
+    ).length;
+  }
+
+  return 0;
 }
 
 function removeRenderOptimizer(): void {
   document.getElementById(STYLE_ID)?.remove();
+}
+
+function claudeIntrinsicSize(): number {
+  if (currentSettings.mode === 'turbo') {
+    return 360;
+  }
+
+  if (currentSettings.mode === 'balanced') {
+    return 520;
+  }
+
+  return 700;
 }
 
 function installRenderOptimizer():
@@ -85,23 +144,40 @@ function installRenderOptimizer():
     return 'unsupported';
   }
 
-  if (!document.getElementById(STYLE_ID)) {
-    const style =
+  let style =
+    document.getElementById(
+      STYLE_ID,
+    ) as HTMLStyleElement | null;
+
+  if (!style) {
+    style =
       document.createElement('style');
 
     style.id = STYLE_ID;
-
-    style.textContent = `
-      [data-testid^="conversation-turn-"] {
-        content-visibility: auto;
-        contain-intrinsic-size: auto 500px;
-      }
-    `;
 
     (
       document.head ||
       document.documentElement
     ).appendChild(style);
+  }
+
+  if (PLATFORM === 'chatgpt') {
+    style.textContent = `
+      ${CHATGPT_TURN_SELECTOR} {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 500px;
+      }
+    `;
+  } else if (PLATFORM === 'claude') {
+    style.textContent = `
+      ${CLAUDE_TURN_SELECTOR} {
+        content-visibility: auto;
+        contain-intrinsic-size: auto ${claudeIntrinsicSize()}px;
+      }
+    `;
+  } else {
+    removeRenderOptimizer();
+    return 'unsupported';
   }
 
   return 'active';
@@ -166,6 +242,10 @@ function stopObserver(): void {
 function sendConfigToPage(
   settings: ChatSpeedSettings,
 ): void {
+  if (PLATFORM !== 'chatgpt') {
+    return;
+  }
+
   const target =
     MODE_TARGET_TURNS[settings.mode];
 
@@ -233,9 +313,10 @@ function applySettings(
 
   sendMetrics({
     requestOptimizer:
-      currentSettings.mode === 'safe'
-        ? 'disabled'
-        : 'armed',
+      PLATFORM === 'chatgpt' &&
+      currentSettings.mode !== 'safe'
+        ? 'armed'
+        : 'disabled',
 
     renderOptimizer: renderStatus,
 
@@ -246,6 +327,10 @@ function applySettings(
 window.addEventListener(
   'message',
   (event: MessageEvent) => {
+    if (PLATFORM !== 'chatgpt') {
+      return;
+    }
+
     if (event.source !== window) {
       return;
     }

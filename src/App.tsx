@@ -31,7 +31,9 @@ function supportsChatSpeed(
 
     return (
       host === 'chatgpt.com' ||
-      host.endsWith('.chatgpt.com')
+      host.endsWith('.chatgpt.com') ||
+      host === 'claude.ai' ||
+      host.endsWith('.claude.ai')
     );
   } catch {
     return false;
@@ -288,8 +290,8 @@ function App() {
 
       {!supported ? (
         <section className="panel">
-          Open chatgpt.com to use
-          ChatSpeed 2.
+          Open chatgpt.com or claude.ai
+          to use ChatSpeed 2.
         </section>
       ) : (
         <>
@@ -301,8 +303,8 @@ function App() {
 
               <span>
                 {settings.enabled
-                  ? 'Enabled for ChatGPT'
-                  : 'ChatGPT is untouched'}
+                  ? 'Enabled on this site'
+                  : 'This site is untouched'}
               </span>
             </div>
 
@@ -363,15 +365,15 @@ function App() {
             <p className="description">
               {settings.mode ===
                 'safe' &&
-                'Render optimization only. ChatGPT network requests remain unchanged.'}
+                'Render optimization only. Network requests remain unchanged.'}
 
               {settings.mode ===
                 'balanced' &&
-                'Reduces initial long-chat history while keeping a comfortable recent window.'}
+                'ChatGPT: reduces initial history. Claude: render acceleration without rewriting Claude requests.'}
 
               {settings.mode ===
                 'turbo' &&
-                'Loads a much smaller recent window for maximum long-chat responsiveness.'}
+                'ChatGPT: smallest recent request window. Claude: stronger render acceleration only.'}
             </p>
           </section>
 
@@ -402,7 +404,7 @@ function App() {
             />
 
             <Metric
-              label="Recent target"
+              label="ChatGPT target"
               value={
                 target === null
                   ? 'FULL'
