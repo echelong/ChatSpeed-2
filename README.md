@@ -12,6 +12,17 @@ Instead of deleting or modifying your conversation, ChatSpeed 2 adjusts eligible
 
 ---
 
+## Supported browsers
+
+| Browser | Status |
+| --- | --- |
+| **Google Chrome** | Supported |
+| **Brave** | Supported and tested in normal use |
+
+ChatSpeed 2 is built as a Manifest V3 Chromium extension. Brave uses the same extension package; no separate Brave build is required.
+
+---
+
 ## Supported platforms
 
 | Platform | Optimization |
@@ -206,12 +217,20 @@ The extension will be created in:
 dist/
 ```
 
-### 4. Load in Chrome / Chromium
+### 4. Load in Chrome or Brave
 
-Open:
+Open the extensions page for your browser:
+
+**Chrome**
 
 ```text
 chrome://extensions
+```
+
+**Brave**
+
+```text
+brave://extensions
 ```
 
 Then:
@@ -272,9 +291,28 @@ That is the core idea behind ChatSpeed 2.
 
 ## Compatibility
 
-ChatSpeed 2 depends on ChatGPT's current web request structure. If OpenAI changes the conversation endpoint or request format, ChatSpeed may temporarily fall back to normal ChatGPT behavior until compatibility is updated.
+### Browsers
 
-Normal ChatGPT behavior is preferred over forcing an unsafe optimization.
+ChatSpeed 2 officially supports:
+
+- Google Chrome
+- Brave
+
+Both use the same Manifest V3 build from the `dist` folder.
+
+### AI platforms
+
+ChatSpeed 2 supports:
+
+- ChatGPT
+- Claude.ai
+- Grok
+- Gemini
+- DeepSeek
+
+ChatGPT uses both request-level and render optimization. Claude.ai, Grok, Gemini and DeepSeek use render-level optimization and do not receive ChatSpeed's ChatGPT request interceptor.
+
+ChatSpeed depends on the current web structure of each supported platform. If a site changes its page structure or request format, ChatSpeed is designed to fail open rather than force an unsafe optimization.
 
 ---
 
