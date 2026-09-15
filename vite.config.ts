@@ -16,10 +16,10 @@ const manifest =
 
     name: 'ChatSpeed 2',
 
-    version: '2.1.0',
+    version: '2.2.0',
 
     description:
-      'Makes long ChatGPT and Claude.ai conversations lighter and more responsive without storing conversation content.',
+      'Makes long ChatGPT, Claude.ai and Grok conversations lighter and more responsive without storing conversation content.',
 
     icons: {
       '16': 'icon16.png',
@@ -60,6 +60,7 @@ const manifest =
         matches: [
           'https://chatgpt.com/*',
           'https://claude.ai/*',
+          'https://grok.com/*',
         ],
 
         run_at:

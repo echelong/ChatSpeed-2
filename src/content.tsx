@@ -12,6 +12,7 @@ const STYLE_ID = 'chatspeed2-render-style';
 type Platform =
   | 'chatgpt'
   | 'claude'
+  | 'grok'
   | 'unsupported';
 
 function detectPlatform(): Platform {
@@ -31,6 +32,13 @@ function detectPlatform(): Platform {
     return 'claude';
   }
 
+  if (
+    host === 'grok.com' ||
+    host.endsWith('.grok.com')
+  ) {
+    return 'grok';
+  }
+
   return 'unsupported';
 }
 
@@ -41,6 +49,9 @@ const CHATGPT_TURN_SELECTOR =
 
 const CLAUDE_TURN_SELECTOR =
   '[data-testid="user-message"], .font-claude-response';
+
+const GROK_TURN_SELECTOR =
+  '[data-testid="assistant-message"], div.items-end .message-bubble';
 
 let currentSettings: ChatSpeedSettings = {
   enabled: false,
@@ -111,6 +122,12 @@ function renderedTurnCount(): number {
     ).length;
   }
 
+  if (PLATFORM === 'grok') {
+    return document.querySelectorAll(
+      GROK_TURN_SELECTOR,
+    ).length;
+  }
+
   return 0;
 }
 
@@ -118,7 +135,7 @@ function removeRenderOptimizer(): void {
   document.getElementById(STYLE_ID)?.remove();
 }
 
-function claudeIntrinsicSize(): number {
+function nonChatgptIntrinsicSize(): number {
   if (currentSettings.mode === 'turbo') {
     return 360;
   }
@@ -172,7 +189,14 @@ function installRenderOptimizer():
     style.textContent = `
       ${CLAUDE_TURN_SELECTOR} {
         content-visibility: auto;
-        contain-intrinsic-size: auto ${claudeIntrinsicSize()}px;
+        contain-intrinsic-size: auto ${nonChatgptIntrinsicSize()}px;
+      }
+    `;
+  } else if (PLATFORM === 'grok') {
+    style.textContent = `
+      ${GROK_TURN_SELECTOR} {
+        content-visibility: auto;
+        contain-intrinsic-size: auto ${nonChatgptIntrinsicSize()}px;
       }
     `;
   } else {
